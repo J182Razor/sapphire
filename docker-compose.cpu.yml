@@ -11,11 +11,13 @@ services:
       - ./user:/app/user
     env_file:
       - .env
+    environment:
+      - WEB_UI_SSL_ADHOC=false
     restart: unless-stopped
     stdin_open: true
     tty: true
     healthcheck:
-      test: ["CMD", "curl", "-kf", "https://localhost:8073/api/status"]
+      test: ["CMD", "curl", "-f", "http://localhost:8073/api/status"]
       interval: 30s
       timeout: 10s
       retries: 3
