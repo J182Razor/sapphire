@@ -19,20 +19,20 @@ RUN curl -sS https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.
     rm /tmp/miniconda.sh
 
 ENV PATH="/opt/conda/bin:$PATH"
+ENV CONDA_DEFAULT_ENV=sapphire
 
-RUN conda create -n sapphire python=3.11 -y && \
-    conda clean -afy
-
-SHELL ["conda", "run", "-n", "sapphire", "/bin/bash", "-c"]
+RUN /opt/conda/bin/conda create -n sapphire python=3.11 -y && \
+    /opt/conda/bin/conda clean -afy
 
 COPY requirements.txt requirements-minimal.txt ./
 
-RUN pip install --upgrade pip && \
-    pip install -r requirements.txt
+RUN /opt/conda/envs/sapphire/bin/pip install --upgrade pip && \
+    /opt/conda/envs/sapphire/bin/pip install -r requirements.txt
 
 COPY . .
 
 ENV PYTHONPATH="/app:$PYTHONPATH"
+ENV PATH="/opt/conda/envs/sapphire/bin:$PATH"
 
 EXPOSE 8073
 
