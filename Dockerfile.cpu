@@ -1,4 +1,4 @@
-FROM ubuntu:22.04
+FROM python:3.11-slim
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PYTHONUNBUFFERED=1
@@ -10,29 +10,23 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ffmpeg \
     curl \
     git \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
+    && useradd -m -s /bin/bash appuser
 
 WORKDIR /app
 
-RUN curl -sS https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -o /tmp/miniconda.sh && \
-    bash /tmp/miniconda.sh -b -p /opt/conda && \
-    rm /tmp/miniconda.sh
+COPY requirements.txt ./
 
-ENV PATH="/opt/conda/bin:$PATH"
-ENV CONDA_DEFAULT_ENV=sapphire
-
-RUN /opt/conda/bin/conda create -n sapphire python=3.11 -y && \
-    /opt/conda/bin/conda clean -afy
-
-COPY requirements.txt requirements-minimal.txt ./
-
-RUN /opt/conda/envs/sapphire/bin/pip install --upgrade pip && \
-    /opt/conda/envs/sapphire/bin/pip install -r requirements.txt
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
+RUN mkdir -p /app/user && chown -R appuser:appuser /app
+
+USER appuser
+
 ENV PYTHONPATH="/app:$PYTHONPATH"
-ENV PATH="/opt/conda/envs/sapphire/bin:$PATH"
 
 EXPOSE 8073
 
