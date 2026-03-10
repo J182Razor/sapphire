@@ -10,8 +10,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ffmpeg \
     curl \
     git \
-    && rm -rf /var/lib/apt/lists/* \
-    && useradd -m -s /bin/bash appuser
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
@@ -22,12 +21,9 @@ RUN pip install --no-cache-dir --upgrade pip && \
 
 COPY . .
 
-RUN mkdir -p /app/user && chown -R appuser:appuser /app
-
-USER appuser
-
 ENV PYTHONPATH="/app:$PYTHONPATH"
 
 EXPOSE 8073
 
+ENTRYPOINT ["/app/docker-entrypoint.sh"]
 CMD ["python", "main.py"]
