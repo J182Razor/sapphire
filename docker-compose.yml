@@ -13,7 +13,6 @@ services:
       - .env
     environment:
       - NVIDIA_VISIBLE_DEVICES=all
-      - WEB_UI_SSL_ADHOC=false
     devices:
       - /dev/snd:/dev/snd
     group_add:
@@ -22,7 +21,7 @@ services:
     stdin_open: true
     tty: true
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8073/api/status"]
+      test: ["CMD", "curl", "-kf", "https://localhost:8073/api/status"]
       interval: 30s
       timeout: 10s
       retries: 3
