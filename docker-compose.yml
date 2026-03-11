@@ -3,6 +3,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+<<<<<<< HEAD
     container_name: sapphire-ai
     hostname: sapphire
     ports:
@@ -44,3 +45,28 @@ services:
 volumes:
   sapphire_user:
     driver: local
+=======
+    image: sapphire:latest
+    container_name: sapphire
+    ports:
+      - "8073:8073"
+    volumes:
+      - ./user:/app/user
+    env_file:
+      - .env
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+    devices:
+      - /dev/snd:/dev/snd
+    group_add:
+      - audio
+    restart: unless-stopped
+    stdin_open: true
+    tty: true
+    healthcheck:
+      test: ["CMD", "curl", "-kf", "https://localhost:8073/api/status"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+>>>>>>> 8862d2f49d1850a71bab974c86896065cc36021c

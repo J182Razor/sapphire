@@ -1,0 +1,24 @@
+services:
+  sapphire:
+    build:
+      context: .
+      dockerfile: Dockerfile.cpu
+    image: sapphire:cpu
+    container_name: sapphire
+    ports:
+      - "8073:8073"
+    volumes:
+      - ./user:/app/user
+    env_file:
+      - .env
+    environment:
+      - WEB_UI_SSL_ADHOC=false
+    restart: unless-stopped
+    stdin_open: true
+    tty: true
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8073/api/status"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s

@@ -1,34 +1,13 @@
 FROM python:3.11-slim
 
 ENV DEBIAN_FRONTEND=noninteractive
-<<<<<<< HEAD
-ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-WORKDIR /app
-
-=======
-ENV PYTHONUNBUFFERED=1
-
->>>>>>> 8862d2f49d1850a71bab974c86896065cc36021c
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libportaudio2 \
     libsndfile1 \
     portaudio19-dev \
     ffmpeg \
-<<<<<<< HEAD
-    && rm -rf /var/lib/apt/lists/*
-
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-
-COPY . .
-
-ENV PORT=8073
-
-EXPOSE 8073
-
-=======
     curl \
     git \
     && rm -rf /var/lib/apt/lists/*
@@ -47,5 +26,4 @@ ENV PYTHONPATH="/app:$PYTHONPATH"
 EXPOSE 8073
 
 ENTRYPOINT ["/app/docker-entrypoint.sh"]
->>>>>>> 8862d2f49d1850a71bab974c86896065cc36021c
 CMD ["python", "main.py"]

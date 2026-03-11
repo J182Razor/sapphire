@@ -1,0 +1,36 @@
+services:
+  sapphire:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: sapphire:latest
+    container_name: sapphire
+    ports:
+      - "8073:8073"
+    volumes:
+      - ./user:/app/user
+    env_file:
+      - .env
+    environment:
+      - WEB_UI_SSL_ADHOC=false
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8073/api/status"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  caddy:
+    image: caddy:2
+    container_name: sapphire-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - ./caddy_data:/data
+      - ./caddy_config:/config
+    depends_on:
+      - sapphire
+    restart: unless-stopped

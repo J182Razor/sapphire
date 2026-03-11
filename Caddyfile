@@ -1,0 +1,12 @@
+# Replace your-domain.com with your actual domain
+your-domain.com {
+    reverse_proxy sapphire:8073
+    tls {
+        protocols tls1.2 tls1.3
+    }
+}
+
+# For testing without a domain, use HTTP only
+localhost {
+    reverse_proxy sapphire:8073
+}
