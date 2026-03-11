@@ -1,0 +1,46 @@
+services:
+  sapphire:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sapphire-ai
+    hostname: sapphire
+    ports:
+      - "8073:8073"    # Web UI
+      - "5012:5012"    # TTS server
+    volumes:
+      - sapphire_user:/app/user    # Persistent memory & settings
+    environment:
+      - PYTHONDONTWRITEBYTECODE=1
+      - PYTHONUNBUFFERED=1
+      - TZ=${TZ:-UTC}
+      # LLM API Keys (set in host .env)
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      # Home Assistant
+      - HA_TOKEN=${HA_TOKEN:-}
+      # Optional: ElevenLabs TTS
+      - ELEVENLABS_API_KEY=${ELEVENLABS_API_KEY:-}
+      # Optional: Fireworks Whisper STT
+      - FIREWORKS_API_KEY=${FIREWORKS_API_KEY:-}
+    # Network: Bridge mode = full outbound internet access
+    network_mode: bridge
+    # Audio: Linux only - remove for Windows/macOS Docker Desktop
+    # devices:
+    #   - /dev/snd:/dev/snd
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8073/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 90s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  sapphire_user:
+    driver: local
